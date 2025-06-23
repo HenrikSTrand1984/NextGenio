@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download JSON configuration
+        run: |
+          curl -o nextgenio_configuration.json https://raw.githubusercontent.com/your-username/NextGenio/main/configs/nextgenio_configuration.json
+
+      - name: Download Privacy Policy
+        run: |
+          curl -o privacy_policy.md https://raw.githubusercontent.com/your-username/NextGenio/main/docs/privacy_policy.md
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest
+
+      - name: Build Docker image
+        run: |
+          docker build -t nextgenio .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker tag nextgenio ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest

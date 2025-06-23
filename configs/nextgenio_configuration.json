@@ -1,0 +1,202 @@
+{
+  "organization": {
+    "name": "NextGenio",
+    "version": "1.0",
+    "agents": [
+      {
+        "name": "Virtual Quality Manager",
+        "role": "Quality Management and ISO 9001/9004 compliance",
+        "responsibilities": [
+          "Handle deviations and corrective actions",
+          "Assist in internal audits and follow-up on findings",
+          "Manage documented procedures and guidelines",
+          "Support management reviews and quality objectives",
+          "Coordinate actions based on root cause analysis",
+          "Propose improvements in accordance with ISO 9004"
+        ],
+        "standards": [
+          "ISO 9001:2015",
+          "ISO 9004:2018",
+          "ISO 31000"
+        ],
+        "tools_and_integrations": [
+          {
+            "tool": "GitHub",
+            "description": "For storing markdown files, ISO procedures, and documentation",
+            "integration": "API calls to fetch and update content",
+            "file_types": [
+              ".md",
+              ".yaml"
+            ]
+          },
+          {
+            "tool": "Supabase",
+            "description": "For structured data storage of deviations, actions, and revisions",
+            "integration": "API for querying and updating reports",
+            "file_types": [
+              ".json",
+              ".yaml"
+            ]
+          },
+          {
+            "tool": "Dropbox",
+            "description": "For storing and sharing PDF/Word reports and revision documents",
+            "integration": "API for exporting and retrieving files",
+            "file_types": [
+              ".pdf",
+              ".docx"
+            ]
+          }
+        ],
+        "access_and_security": {
+          "data_privacy": "Follows GDPR and ISO 27001 security protocols",
+          "data_storage": "Structured data handled through API integrations",
+          "access_control": "Role-based access for data and reports"
+        },
+        "usage_scenarios": [
+          "Interactive use via GPT GUI for real-time reporting",
+          "API calls from integrated systems (e.g., revision systems, dashboards)",
+          "Coordination with other agents like Environmental, Safety, and Risk agents"
+        ]
+      },
+      {
+        "name": "Virtual IT Manager",
+        "role": "IT Infrastructure and Security Management",
+        "responsibilities": [
+          "Monitor and advise on network, server, and cloud solutions",
+          "Support development in Python, FastAPI, SQL, GitHub, and DevOps",
+          "Document code and create automation templates",
+          "Manage integrations with APIs, databases, and external services",
+          "Follow ISO 27001 principles for information security",
+          "Oversee access controls, security procedures, and system configurations"
+        ],
+        "standards": [
+          "ISO 27001:2013"
+        ],
+        "tools_and_integrations": [
+          {
+            "tool": "GitHub",
+            "description": "For version control of code and automation scripts",
+            "integration": "GitHub Actions for continuous integration and deployment",
+            "file_types": [
+              ".json",
+              ".yaml",
+              ".md"
+            ]
+          },
+          {
+            "tool": "Docker",
+            "description": "For containerized development and deployment",
+            "integration": "Automated Docker builds and deployment pipelines",
+            "file_types": [
+              "Dockerfile"
+            ]
+          },
+          {
+            "tool": "Supabase",
+            "description": "For storing structured data related to system logs and security reports",
+            "integration": "API integration for querying security logs and audit trails",
+            "file_types": [
+              ".json",
+              ".yaml"
+            ]
+          },
+          {
+            "tool": "FastAPI",
+            "description": "For developing APIs and backend services",
+            "integration": "API for handling requests from other agents and systems",
+            "file_types": [
+              ".py"
+            ]
+          }
+        ],
+        "access_and_security": {
+          "security": "Follows ISO 27001 standards for IT security",
+          "network_security": "Monitors network security, user access, and data encryption",
+          "access_control": "Ensures role-based access control and secure data handling"
+        },
+        "usage_scenarios": [
+          "Oversee infrastructure and network configuration",
+          "Provide automated solutions for API integrations and automation tasks",
+          "Support security audits and compliance checks"
+        ]
+      }
+    ],
+    "systems": [
+      {
+        "name": "GitHub",
+        "purpose": "Version control and documentation management",
+        "usage": [
+          "Storing source code",
+          "Storing agent-related markdown documentation",
+          "Continuous integration and deployment via GitHub Actions"
+        ],
+        "integration": [
+          "API calls for updating agent roles and scripts",
+          "YAML, JSON for automated actions"
+        ],
+        "security": "2FA for users, encryption for sensitive data"
+      },
+      {
+        "name": "Supabase",
+        "purpose": "Database management for storing structured data",
+        "usage": [
+          "Storing deviations, actions, and revisions",
+          "Structured storage for agent data and reporting"
+        ],
+        "integration": [
+          "API integration for querying and updating data"
+        ],
+        "security": "Data encryption, daily backups, and access logging"
+      },
+      {
+        "name": "Docker",
+        "purpose": "Containerization for development and production",
+        "usage": [
+          "Building and deploying NextGenio in containers",
+          "Automation via Docker builds and deployments"
+        ],
+        "integration": [
+          "GitHub for CI/CD integration",
+          "Supabase for database integration"
+        ]
+      },
+      {
+        "name": "Dropbox",
+        "purpose": "Cloud file storage for reports and documents",
+        "usage": [
+          "Storing quality reports, revision documents, and PDFs"
+        ],
+        "integration": [
+          "API for exporting reports and retrieving documents"
+        ],
+        "security": "Encrypted file storage, secure access"
+      }
+    ],
+    "automation": {
+      "processes": [
+        {
+          "name": "Generate Quality Report",
+          "trigger": "ISO audit completion",
+          "action": "Generate quality report based on ISO 9001",
+          "output": "PDF report",
+          "agent": "Virtual Quality Manager"
+        },
+        {
+          "name": "Deviation Tracking",
+          "trigger": "Deviation detected",
+          "action": "Log deviation, notify responsible agent, and store in database",
+          "output": "JSON log",
+          "agent": "Virtual Quality Manager"
+        },
+        {
+          "name": "Infrastructure Monitoring",
+          "trigger": "Scheduled check",
+          "action": "Monitor IT infrastructure and security",
+          "output": "Security log",
+          "agent": "Virtual IT Manager"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+# Development dependencies
+pandas==1.4.2
+numpy==1.22.4
+pytest==7.0.1  # Testing framework
+jupyter==1.0.0  # For running Jupyter notebooks
+nbconvert==6.3.0  # Convert notebooks to different formats
+docker==5.0.0  # Docker integration
+requests==2.26.0  # For API calls
+clickup-python==1.0.0  # ClickUp API (if available)
+openai==0.27.0  # OpenAI API for text generation

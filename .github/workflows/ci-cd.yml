@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline with Docker, ClickUp, OpenAI, Dropbox, Notion, and Zapier
 
 on:
   push:
@@ -11,37 +11,88 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Download JSON configuration
-        run: |
-          curl -o nextgenio_configuration.json https://raw.githubusercontent.com/your-username/NextGenio/main/configs/nextgenio_configuration.json
-
-      - name: Download Privacy Policy
-        run: |
-          curl -o privacy_policy.md https://raw.githubusercontent.com/your-username/NextGenio/main/docs/privacy_policy.md
-
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install jupyter nbconvert pytest docker requests
 
-      - name: Run tests
+      # 4. Run Jupyter Notebooks (to validate that they execute properly)
+      - name: Run Jupyter Notebooks
+        run: |
+          jupyter nbconvert --to notebook --execute --inplace your_notebook.ipynb
+
+      # 5. Run Python tests
+      - name: Run Python tests
         run: |
           pytest
 
+      # 6. Build Docker image
       - name: Build Docker image
         run: |
           docker build -t nextgenio .
 
+      # 7. Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # 8. Push Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker tag nextgenio ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
+
+      # 9. Trigger Zapier Webhook (to update ClickUp task status, etc.)
+      - name: Trigger Zapier Webhook for ClickUp and Notion
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"event": "Build Complete", "status": "success", "repo": "${{ github.repository }}"}' \
+            ${{ secrets.ZAPIER_WEBHOOK_URL }}
+
+      # 10. Send data to Dropbox via Zapier (optional, for saving files)
+      - name: Send data to Dropbox via Zapier
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"event": "New File", "file_name": "nextgenio_build.tar.gz", "status": "success"}' \
+            ${{ secrets.ZAPIER_WEBHOOK_URL }}
+
+      # 11. Send OpenAI-generated content to Notion (Optional)
+      - name: Generate content with OpenAI and send to Notion
+        run: |
+          curl -X POST \
+            "https://api.openai.com/v1/completions" \
+            -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "text-davinci-003",
+              "prompt": "Generate a summary of the current build.",
+              "max_tokens": 100
+            }' | jq -r '.choices[0].text' | curl -X POST \
+            "https://api.notion.com/v1/pages" \
+            -H "Authorization: Bearer ${{ secrets.NOTION_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"parent": {"database_id": "your_notion_database_id"}, "properties": {"title": {"title": [{"text": {"content": "Build Summary"}}]}, "content": {"rich_text": [{"text": {"content": "$(cat)"}}]}}'
+      
+      # 12. Update ClickUp Task Status via API (Optional, can be triggered by Zapier)
+      - name: Update ClickUp Task Status
+        run: |
+          curl -X PUT \
+            "https://api.clickup.com/api/v2/task/TASK_ID" \
+            -H "Authorization: ${{ secrets.CLICKUP_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"status": "complete"}'

@@ -1,0 +1,9 @@
+# NextGenio - Install Dependencies
+
+Follow the steps below to install dependencies and set up the environment:
+
+## 1. Clone the repository:
+Clone the NextGenio repository from GitHub:
+```bash
+git clone https://github.com/your-username/NextGenio.git
+cd NextGenio

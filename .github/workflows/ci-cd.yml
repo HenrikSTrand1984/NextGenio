@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with Docker, ClickUp, OpenAI, Dropbox, Notion, and Zapier
+name: CI/CD Pipeline - Minimal
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: '3.9'
 
-      # 3. Install development dependencies for development environment
+      # 3. Install development dependencies
       - name: Install development dependencies
         run: |
           pip install -r docs/requirements-dev.txt
@@ -33,66 +33,8 @@ jobs:
         run: |
           pytest
 
-      # 5. Install production dependencies
-      - name: Install production dependencies
-        run: |
-          pip install -r docs/requirements-prod.txt
-
-      # 6. Build Docker image
+      # 5. Build Docker image
       - name: Build Docker image
         run: |
           docker build -t nextgenio .
-
-      # 7. Log in to Docker Hub
-      - name: Log in to Docker Hub
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-      # 8. Push Docker image to Docker Hub
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker tag nextgenio ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
-
-      # 9. Trigger Zapier Webhook for ClickUp and Notion
-      - name: Trigger Zapier Webhook for ClickUp and Notion
-        run: |
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d '{"event": "Build Complete", "status": "success", "repo": "${{ github.repository }}"}' \
-            ${{ secrets.ZAPIER_WEBHOOK_URL }}
-
-      # 10. Send data to Dropbox via Zapier
-      - name: Send data to Dropbox via Zapier
-        run: |
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d '{"event": "New File", "file_name": "nextgenio_build.tar.gz", "status": "success"}' \
-            ${{ secrets.ZAPIER_WEBHOOK_URL }}
-
-      # 11. Generate content with OpenAI and send to Notion
-      - name: Generate content with OpenAI and send to Notion
-        run: |
-          curl -X POST \
-            "https://api.openai.com/v1/completions" \
-            -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "model": "text-davinci-003",
-              "prompt": "Generate a summary of the current build.",
-              "max_tokens": 100
-            }' | jq -r '.choices[0].text' | curl -X POST \
-            "https://api.notion.com/v1/pages" \
-            -H "Authorization: Bearer ${{ secrets.NOTION_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"parent": {"database_id": "your_notion_database_id"}, "properties": {"title": {"title": [{"text": {"content": "Build Summary"}}]}, "content": {"rich_text": [{"text": {"content": "$(cat)"}}]}}'
-
-      # 12. Update ClickUp Task Status
-      - name: Update ClickUp Task Status
-        run: |
-          curl -X PUT \
-            "https://api.clickup.com/api/v2/task/TASK_ID" \
-            -H "Authorization: ${{ secrets.CLICKUP_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"status": "complete"}'
 

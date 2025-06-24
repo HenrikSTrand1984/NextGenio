@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Docker Integration
+name: CI/CD Pipeline - Testing Only
 
 on:
   push:
@@ -28,19 +28,8 @@ jobs:
         run: |
           pip install -r docs/requirements-dev.txt
 
-      # 4. Build Docker image
-      - name: Build Docker image
+      # 4. Run Python tests (with verbose for better details)
+      - name: Run tests
         run: |
-          docker build -t nextgenio .
-
-      # 5. Log in to Docker Hub (using GitHub secrets for username and password)
-      - name: Log in to Docker Hub
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-      # 6. Push Docker image to Docker Hub
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker tag nextgenio ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/nextgenio:latest
+          pytest -v  # Run all tests (including API tests)
 

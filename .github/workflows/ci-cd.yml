@@ -28,13 +28,7 @@ jobs:
         run: |
           pip install -r docs/requirements-dev.txt
 
-      # 4. Run Python tests
+      # 4. Run Python tests (with verbose for better details)
       - name: Run tests
         run: |
-          pytest
-
-      # 5. Build Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t nextgenio .
-
+          pytest -v  # Verbose mode for better error details

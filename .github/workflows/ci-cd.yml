@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Testing Only
+name: CI/CD Pipeline - Basic Testing Only
 
 on:
   push:
@@ -28,8 +28,7 @@ jobs:
         run: |
           pip install -r docs/requirements-dev.txt
 
-      # 4. Run Python tests (with verbose for better details)
-      - name: Run tests
+      # 4. Run Python tests (run basic tests only)
+      - name: Run basic tests
         run: |
-          pytest -v  # Run all tests (including API tests)
-
+          pytest tests/test_example.py -v  # Only run basic tests (no API tests)

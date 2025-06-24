@@ -23,10 +23,17 @@
           {
             "tool": "GitHub",
             "description": "For storing markdown files, ISO procedures, and documentation",
-            "integration": "API calls to fetch and update content",
+            "integration": {
+              "api_url": "https://raw.githubusercontent.com/dummyuser/dummyrepo/main/data.json",
+              "method": "GET",
+              "headers": {
+                "Accept": "application/json"
+              }
+            },
             "file_types": [
               ".md",
-              ".yaml"
+              ".yaml",
+              ".json"
             ]
           },
           {
@@ -132,8 +139,14 @@
           "Continuous integration and deployment via GitHub Actions"
         ],
         "integration": [
-          "API calls for updating agent roles and scripts",
-          "YAML, JSON for automated actions"
+          {
+            "type": "API",
+            "url": "https://api.github.com"
+          },
+          {
+            "type": "raw_url",
+            "url": "https://raw.githubusercontent.com/dummyuser/dummyrepo/main/data.json"
+          }
         ],
         "security": "2FA for users, encryption for sensitive data"
       },

@@ -1,7 +1,4 @@
 # Production dependencies
 pandas==1.4.2
 numpy==1.22.4
-docker==5.0.0
-requests==2.26.0
-clickup-python==1.0.0
-openai==0.27.0
+requests==2.26.0  # For making API calls in production
